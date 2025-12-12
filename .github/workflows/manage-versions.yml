@@ -1,0 +1,46 @@
+name: Manage NPM Versions
+
+on:
+  workflow_dispatch:
+    inputs:
+      actionType:
+        description: "Choose what to do"
+        required: true
+        type: choice
+        options:
+          - deprecate
+          - unpublish
+      version:
+        description: "Version to deprecate or unpublish (example: 3.2.0)"
+        required: true
+        type: string
+      message:
+        description: "Deprecation message (required only if action = deprecate)"
+        required: false
+        type: string
+
+jobs:
+  manage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Deprecate version
+        if: ${{ inputs.actionType == 'deprecate' }}
+        run: npm deprecate "@shubhamstr/express-api-template@${{ inputs.version }}" "${{ inputs.message }}"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Unpublish version
+        if: ${{ inputs.actionType == 'unpublish' }}
+        run: npm unpublish "@shubhamstr/express-api-template@${{ inputs.version }}"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
