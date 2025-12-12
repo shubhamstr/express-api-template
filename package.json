@@ -1,5 +1,5 @@
 {
-  "name": "express-api-template",
+  "name": "@shubhamstr/express-api-template",
   "version": "1.0.0",
   "main": "src/server.js",
   "type": "module",
